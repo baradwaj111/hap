@@ -25,7 +25,10 @@ export function getQuoteOfDay(dateKey: string): Quote {
   return QUOTES[hash % QUOTES.length];
 }
 
-export function getRandomQuote(excludeText?: string): Quote {
-  const pool = excludeText ? QUOTES.filter((q) => q.text !== excludeText) : QUOTES;
+export function getRandomQuote(excludeText?: string, category?: QuoteCategory): Quote {
+  let pool = category ? QUOTES.filter((q) => q.category === category) : QUOTES;
+  if (excludeText && pool.some((q) => q.text !== excludeText)) {
+    pool = pool.filter((q) => q.text !== excludeText);
+  }
   return pool[Math.floor(Math.random() * pool.length)];
 }

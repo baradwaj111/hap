@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { MemeSurprise } from "@/components/ui/MemeSurprise";
-import { QUOTES, getQuoteOfDay, type Quote, type QuoteCategory } from "@/lib/content";
+import { QuoteReveal } from "@/components/ui/QuoteReveal";
+import { getQuoteOfDay, getRandomQuote, type Quote, type QuoteCategory } from "@/lib/content";
 import { useSettings, useTodayKey } from "@/lib/hooks";
 import { saveQuoteAsImage } from "@/lib/shareImage";
 
@@ -48,8 +49,22 @@ export default function HopePage() {
   const todayKey = useTodayKey(settings.dayStartHour);
   const quoteOfDay = useMemo(() => getQuoteOfDay(todayKey), [todayKey]);
   const [category, setCategory] = useState<QuoteCategory | null>(null);
+  const [pickedQuote, setPickedQuote] = useState<Quote | null>(null);
 
-  const filtered = category ? QUOTES.filter((q) => q.category === category) : [];
+  function pickCategory(key: QuoteCategory) {
+    if (key === category) {
+      setCategory(null);
+      setPickedQuote(null);
+      return;
+    }
+    setCategory(key);
+    setPickedQuote(getRandomQuote(undefined, key));
+  }
+
+  function shuffle() {
+    if (!category) return;
+    setPickedQuote((prev) => getRandomQuote(prev?.text, category));
+  }
 
   return (
     <main className="flex flex-col gap-5 px-4 pb-6 pt-6 md:pt-4">
@@ -71,7 +86,7 @@ export default function HopePage() {
           {CATEGORIES.map((c) => (
             <button
               key={c.key}
-              onClick={() => setCategory(c.key === category ? null : c.key)}
+              onClick={() => pickCategory(c.key)}
               className="btn-squish focus-ring flex min-h-11 items-center rounded-full px-3.5 py-1.5 text-sm"
               style={{
                 background: category === c.key ? "var(--color-accent-1)" : "var(--color-surface)",
@@ -84,11 +99,18 @@ export default function HopePage() {
         </div>
       </div>
 
-      {category && (
+      {category && pickedQuote && (
         <div className="flex flex-col gap-3">
-          {filtered.map((q, i) => (
-            <QuoteCard key={i} quote={q} />
-          ))}
+          <QuoteReveal quote={pickedQuote}>
+            <QuoteCard quote={pickedQuote} tint />
+          </QuoteReveal>
+          <button
+            onClick={shuffle}
+            className="btn-squish focus-ring mx-auto flex min-h-11 items-center rounded-full px-4 py-2 text-sm"
+            style={{ background: "var(--color-accent-2)" }}
+          >
+            Show me another ✨
+          </button>
         </div>
       )}
     </main>
