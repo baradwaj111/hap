@@ -11,7 +11,7 @@ export default function TabsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-dvh md:pl-56">
+    <div className="min-h-dvh md:pl-[280px]">
       <AmbientBackdrop />
       <ThemeParticles />
       <TabBar />

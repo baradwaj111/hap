@@ -25,12 +25,12 @@ export function TabBar() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t md:inset-y-0 md:left-0 md:right-auto md:bottom-auto md:flex md:w-60 md:flex-col md:border-t-0 md:border-r"
+      className="fixed inset-x-0 bottom-0 z-40 border-t md:inset-y-4 md:left-4 md:right-auto md:bottom-auto md:flex md:w-64 md:flex-col md:rounded-[28px] md:border-t-0"
       style={{
         background:
           "linear-gradient(180deg, var(--color-surface) 0%, color-mix(in srgb, var(--color-accent-1) 10%, var(--color-surface)) 100%)",
         borderColor: "color-mix(in srgb, var(--color-ink) 8%, transparent)",
-        boxShadow: "4px 0 24px color-mix(in srgb, var(--color-ink) 6%, transparent)",
+        boxShadow: "0 12px 32px color-mix(in srgb, var(--color-ink) 10%, transparent)",
       }}
       aria-label="Main navigation"
     >
