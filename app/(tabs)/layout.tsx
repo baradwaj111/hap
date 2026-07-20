@@ -1,5 +1,6 @@
 import { AmbientBackdrop } from "@/components/ui/AmbientBackdrop";
 import { MobileLogoutButton } from "@/components/ui/MobileLogoutButton";
+import { NightSky } from "@/components/ui/NightSky";
 import { NotificationAsk } from "@/components/ui/NotificationAsk";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { TabBar } from "@/components/ui/TabBar";
@@ -13,6 +14,7 @@ export default function TabsLayout({
   return (
     <div className="min-h-dvh md:pl-[280px]">
       <AmbientBackdrop />
+      <NightSky />
       <ThemeParticles />
       <TabBar />
       <MobileLogoutButton />

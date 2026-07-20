@@ -70,6 +70,26 @@
   --grain-opacity: 0.06;
 }
 
+/* Auto-applied 8pm -> her day start, overriding whichever palette is picked
+   above (see useIsNightMode). accent-3 is solid-filled as a button/pill
+   background all over the app (journal prompts, settings, hope card...)
+   with --ink text on top, so it's kept a muted-but-warm amber here for AA
+   contrast against the near-white night ink — NOT bright yellow. The duck's
+   own bright yellow lives in --duck-body below, decoupled from accent-3. */
+[data-theme="night"] {
+  --bg: #0a1128;
+  --surface: #111a3a;
+  --accent-1: #35407a;
+  --accent-2: #4a5aa0;
+  --accent-3: #96690f;
+  --accent-4: #5470b8;
+  --ink: #eef1ff;
+  --muted: #aab3d9;
+  --attention: #ffb15e;
+  --duck-body: #ffe066;
+  --grain-opacity: 0.06;
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -80,6 +100,7 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-attention: var(--attention);
+  --color-duck-body: var(--duck-body, var(--accent-3));
 
   --font-display: var(--font-quicksand);
   --font-body: var(--font-nunito);
@@ -95,7 +116,8 @@ html {
   color-scheme: light;
   scroll-behavior: smooth;
 }
-[data-theme="moonlight"] {
+[data-theme="moonlight"],
+[data-theme="night"] {
   color-scheme: dark;
 }
 

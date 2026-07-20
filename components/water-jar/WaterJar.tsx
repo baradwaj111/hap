@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
 import { Duck, type DuckState } from "@/components/mascot/Duck";
 import type { Weather } from "@/lib/db";
@@ -22,6 +22,47 @@ const TAP_TARGETS = [
   { ml: 500, label: "Bottle", icon: "🍶" },
 ] as const;
 
+// One period = 100 user-units; the viewBox window (0-200) shows two periods
+// at rest. The path is drawn out to 400 (four periods) so there's always
+// spare wave to reveal as it scrolls — sliding by exactly one period (100)
+// loops seamlessly.
+const WAVE_PATH =
+  "M0 10 Q 25 0 50 10 T 100 10 T 150 10 T 200 10 T 250 10 T 300 10 T 350 10 T 400 10 V20 H0 Z";
+
+function Wave({
+  color,
+  opacity,
+  duration,
+  top,
+  reverse,
+  reduce,
+}: {
+  color: string;
+  opacity: number;
+  duration: number;
+  top: number;
+  reverse?: boolean;
+  reduce: boolean;
+}) {
+  return (
+    <svg
+      viewBox="0 0 200 20"
+      preserveAspectRatio="none"
+      className="pointer-events-none absolute inset-x-0"
+      style={{ top, height: 20, width: "100%" }}
+      aria-hidden
+    >
+      <motion.path
+        d={WAVE_PATH}
+        fill={color}
+        opacity={opacity}
+        animate={reduce ? undefined : { x: reverse ? [-100, 0] : [0, -100] }}
+        transition={{ duration, repeat: Infinity, ease: "linear" }}
+      />
+    </svg>
+  );
+}
+
 export function WaterJar({
   totalMl,
   goalMl,
@@ -33,6 +74,7 @@ export function WaterJar({
 }: WaterJarProps) {
   const [ripples, setRipples] = useState<{ id: number; x: number }[]>([]);
   const [justLogged, setJustLogged] = useState(false);
+  const reduce = useReducedMotion();
 
   const percent = Math.min(1, goalMl > 0 ? totalMl / goalMl : 0);
   const reachedGoal = totalMl >= goalMl;
@@ -65,17 +107,28 @@ export function WaterJar({
       >
         {/* water fill */}
         <motion.div
-          className="absolute inset-x-0 bottom-0"
-          style={{
-            background:
-              "linear-gradient(180deg, var(--color-accent-1) 0%, var(--color-accent-4) 100%)",
-            opacity: 0.55,
-            borderTopLeftRadius: "50% 18px",
-            borderTopRightRadius: "50% 18px",
-          }}
+          className="absolute inset-x-0 bottom-0 overflow-visible"
           animate={{ height: `${18 + percent * 72}%` }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-        />
+        >
+          <div
+            className="absolute inset-x-0 bottom-0 top-2"
+            style={{
+              background:
+                "linear-gradient(180deg, var(--color-accent-1) 0%, var(--color-accent-4) 100%)",
+              opacity: 0.55,
+            }}
+          />
+          <Wave color="var(--color-accent-4)" opacity={0.45} duration={7} top={-6} reduce={!!reduce} />
+          <Wave
+            color="var(--color-accent-1)"
+            opacity={0.6}
+            duration={4.5}
+            top={-3}
+            reverse
+            reduce={!!reduce}
+          />
+        </motion.div>
 
         <AnimatePresence>
           {ripples.map((r) => (

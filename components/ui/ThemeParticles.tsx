@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { useMemo } from "react";
-import { useSettings } from "@/lib/hooks";
+import { useIsNightMode, useSettings } from "@/lib/hooks";
 
 const PARTICLE_BY_THEME: Record<string, string> = {
   lavender: "🌸",
@@ -15,6 +15,7 @@ const PARTICLE_BY_THEME: Record<string, string> = {
 /** Small drifting theme-flavored particles for ambient depth behind tab content. */
 export function ThemeParticles() {
   const settings = useSettings();
+  const isNight = useIsNightMode(settings.dayStartHour);
   const reduce = useReducedMotion();
   const glyph = PARTICLE_BY_THEME[settings.palette] ?? "✨";
 
@@ -30,7 +31,7 @@ export function ThemeParticles() {
     [],
   );
 
-  if (reduce) return null;
+  if (isNight || reduce) return null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden>

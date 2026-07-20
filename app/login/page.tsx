@@ -2,16 +2,28 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Duck } from "@/components/mascot/Duck";
+import { motion, useReducedMotion } from "framer-motion";
+import { AmbientBackdrop } from "@/components/ui/AmbientBackdrop";
+import { NightSky } from "@/components/ui/NightSky";
+import { Duck, type DuckState } from "@/components/mascot/Duck";
 import { createClient } from "@/lib/supabase/client";
+import { APP_NAME } from "@/lib/config";
+import { useIsNightMode, useSettings } from "@/lib/hooks";
 import { usernameToEmail } from "@/lib/username";
 
 export default function LoginPage() {
   const router = useRouter();
+  const reduce = useReducedMotion();
+  const settings = useSettings();
+  const isNight = useIsNightMode(settings.dayStartHour);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [shake, setShake] = useState(0);
+  const [welcomed, setWelcomed] = useState(false);
+
+  const duckState: DuckState = welcomed ? "hug" : error ? "sleepy" : "idle";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,6 +38,7 @@ export default function LoginPage() {
 
     if (signInError || !data.user) {
       setError("That username or password doesn't match. Try again?");
+      setShake((n) => n + 1);
       setLoading(false);
       return;
     }
@@ -36,19 +49,61 @@ export default function LoginPage() {
       .eq("id", data.user.id)
       .single();
 
-    router.push(profile?.role === "admin" ? "/settings" : "/today");
-    router.refresh();
+    setWelcomed(true);
+    setTimeout(() => {
+      router.push(profile?.role === "admin" ? "/settings" : "/today");
+      router.refresh();
+    }, 550);
   }
 
   return (
     <main
-      className="flex min-h-dvh flex-col items-center justify-center gap-6 px-6 text-center"
-      data-theme="lavender"
+      className="relative flex min-h-dvh flex-col items-center justify-center gap-6 overflow-hidden px-6 text-center"
+      data-theme={isNight ? "night" : settings.palette}
       style={{ background: "var(--color-bg)" }}
     >
-      <Duck state="idle" />
-      <form onSubmit={handleSubmit} className="card flex w-full max-w-xs flex-col gap-3 p-6">
-        <h1 className="font-display text-xl">Welcome back</h1>
+      <AmbientBackdrop />
+      <NightSky />
+
+      <motion.div
+        initial={reduce ? undefined : { opacity: 0, y: -14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="relative z-10"
+      >
+        <Duck state={duckState} size={150} />
+      </motion.div>
+
+      <motion.form
+        onSubmit={handleSubmit}
+        initial={reduce ? undefined : { opacity: 0, y: 22, scale: 0.96 }}
+        animate={
+          shake
+            ? { opacity: 1, y: 0, scale: 1, x: [0, -10, 10, -6, 6, 0] }
+            : { opacity: 1, y: 0, scale: 1 }
+        }
+        transition={
+          shake
+            ? { x: { duration: 0.45, ease: "easeInOut" } }
+            : { duration: 0.5, ease: "easeOut", delay: 0.08 }
+        }
+        key={shake}
+        className="card relative z-10 flex w-full max-w-xs flex-col gap-3 p-7"
+        style={{
+          backdropFilter: "blur(6px)",
+          background:
+            "linear-gradient(165deg, color-mix(in srgb, var(--color-surface) 92%, var(--color-accent-1) 8%), var(--color-surface))",
+        }}
+      >
+        <div className="flex flex-col gap-1">
+          <p className="eyebrow">{APP_NAME}</p>
+          <h1 className="font-display text-2xl">
+            {welcomed ? "yay, you're in! 🎉" : "Welcome back"}
+          </h1>
+          <p className="text-sm text-muted">
+            {welcomed ? "taking you there now..." : "your gentle companion missed you 🐣"}
+          </p>
+        </div>
 
         <input
           value={username}
@@ -56,8 +111,12 @@ export default function LoginPage() {
           placeholder="username"
           autoCapitalize="off"
           autoComplete="username"
-          className="focus-ring rounded-xl px-3.5 py-2.5 text-sm"
-          style={{ background: "var(--color-bg)" }}
+          disabled={loading || welcomed}
+          className="focus-ring rounded-xl px-3.5 py-2.5 text-sm transition-shadow duration-200"
+          style={{
+            background: "var(--color-bg)",
+            border: "1px solid color-mix(in srgb, var(--color-ink) 8%, transparent)",
+          }}
         />
         <input
           value={password}
@@ -65,21 +124,41 @@ export default function LoginPage() {
           type="password"
           placeholder="password"
           autoComplete="current-password"
-          className="focus-ring rounded-xl px-3.5 py-2.5 text-sm"
-          style={{ background: "var(--color-bg)" }}
+          disabled={loading || welcomed}
+          className="focus-ring rounded-xl px-3.5 py-2.5 text-sm transition-shadow duration-200"
+          style={{
+            background: "var(--color-bg)",
+            border: "1px solid color-mix(in srgb, var(--color-ink) 8%, transparent)",
+          }}
         />
 
-        {error && <p className="text-sm text-[var(--color-attention)]">{error}</p>}
+        {error && (
+          <motion.p
+            initial={reduce ? undefined : { opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-sm text-[var(--color-attention)]"
+          >
+            {error}
+          </motion.p>
+        )}
 
-        <button
+        <motion.button
           type="submit"
-          disabled={loading || !username || !password}
-          className="btn-squish focus-ring mt-1 rounded-2xl py-2.5 text-sm disabled:opacity-50"
-          style={{ background: "var(--color-accent-1)" }}
+          disabled={loading || welcomed || !username || !password}
+          whileTap={reduce ? undefined : { scale: 0.97 }}
+          className="btn-squish focus-ring mt-1 rounded-2xl py-2.5 text-sm font-semibold disabled:opacity-50"
+          style={{
+            background: welcomed
+              ? "var(--color-accent-4)"
+              : "linear-gradient(135deg, var(--color-accent-1), var(--color-accent-2))",
+            boxShadow: "0 8px 20px -8px color-mix(in srgb, var(--color-accent-1) 60%, transparent)",
+          }}
         >
-          {loading ? "logging in..." : "Log in"}
-        </button>
-      </form>
+          {welcomed ? "see you inside ✨" : loading ? "logging in..." : "Log in"}
+        </motion.button>
+
+        <p className="text-xs text-muted opacity-70">everything stays on this phone 🔒</p>
+      </motion.form>
     </main>
   );
 }

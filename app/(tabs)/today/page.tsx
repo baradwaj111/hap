@@ -115,24 +115,23 @@ export default function TodayPage() {
         </div>
       )}
 
-      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-5">
-        <div className="flex flex-col gap-4">
-          <div id="water-widget">
-            <WaterJar
-              totalMl={totalMl}
-              goalMl={settings.waterGoalMl}
-              hasLogs={logs.length > 0}
-              baseDuckState={duckState}
-              weather={weather}
-              onAdd={(ml) => addWaterLog(ml, settings.dayStartHour)}
-              onUndo={() => undoLastWaterLog(settings.dayStartHour)}
-            />
-          </div>
-          <HopeCard dateKey={todayKey} />
+      <div className="flex flex-col gap-4">
+        <div id="water-widget">
+          <WaterJar
+            totalMl={totalMl}
+            goalMl={settings.waterGoalMl}
+            hasLogs={logs.length > 0}
+            baseDuckState={duckState}
+            weather={weather}
+            onAdd={(ml) => addWaterLog(ml, settings.dayStartHour)}
+            onUndo={() => undoLastWaterLog(settings.dayStartHour)}
+          />
         </div>
 
-        <div className="flex flex-col gap-4">
-          <NourishmentRow dayStartHour={settings.dayStartHour} />
+        <NourishmentRow dayStartHour={settings.dayStartHour} />
+
+        <div className="grid grid-cols-2 items-stretch gap-4">
+          <HopeCard dateKey={todayKey} />
           <div id="mood-picker">
             <MoodPicker dayStartHour={settings.dayStartHour} />
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useIsNightMode, useSettings } from "@/lib/hooks";
 
 const BLOBS = [
   { color: "var(--color-accent-1)", top: "-10%", left: "-15%", size: "55vmax", duration: 26 },
@@ -11,6 +12,10 @@ const BLOBS = [
 /** Slow-drifting blurred color blobs behind tab content, for depth without noise. */
 export function AmbientBackdrop() {
   const reduce = useReducedMotion();
+  const settings = useSettings();
+  const isNight = useIsNightMode(settings.dayStartHour);
+
+  if (isNight) return null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden>

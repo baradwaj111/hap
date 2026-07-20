@@ -77,12 +77,12 @@ export function Duck({ state = "idle", weather, size = 160, className }: DuckPro
         style={{ transformOrigin: "100px 110px" }}
       >
         {/* body */}
-        <ellipse cx="100" cy="112" rx="46" ry="34" fill="var(--color-accent-3)" />
+        <ellipse cx="100" cy="112" rx="46" ry="34" fill="var(--color-duck-body)" />
 
         {/* wings */}
         <motion.path
           d="M70 108 Q50 112 58 130 Q72 128 78 112 Z"
-          fill="color-mix(in srgb, var(--color-accent-3) 70%, var(--color-ink) 10%)"
+          fill="color-mix(in srgb, var(--color-duck-body) 70%, var(--color-ink) 10%)"
           animate={
             state === "hug" && !reduce
               ? { rotate: [0, -35, -35, 0] }
@@ -93,7 +93,7 @@ export function Duck({ state = "idle", weather, size = 160, className }: DuckPro
         />
         <motion.path
           d="M130 108 Q150 112 142 130 Q128 128 122 112 Z"
-          fill="color-mix(in srgb, var(--color-accent-3) 70%, var(--color-ink) 10%)"
+          fill="color-mix(in srgb, var(--color-duck-body) 70%, var(--color-ink) 10%)"
           animate={
             state === "hug" && !reduce ? { rotate: [0, 35, 35, 0] } : { rotate: 0 }
           }
@@ -102,7 +102,7 @@ export function Duck({ state = "idle", weather, size = 160, className }: DuckPro
         />
 
         {/* head */}
-        <circle cx="76" cy="76" r="30" fill="var(--color-accent-3)" />
+        <circle cx="76" cy="76" r="30" fill="var(--color-duck-body)" />
 
         {/* blush cheek */}
         <circle cx="66" cy="86" r="6" fill="var(--color-accent-2)" opacity="0.7" />

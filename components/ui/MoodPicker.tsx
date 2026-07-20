@@ -33,16 +33,16 @@ export function MoodPicker({ dayStartHour }: { dayStartHour: number }) {
   }
 
   return (
-    <div className="card-tint-4 p-5">
+    <div className="card-tint-4 flex h-full flex-col p-5">
       <p className="eyebrow">Mood</p>
       <h2 className="font-display mt-0.5 text-lg">How&apos;s the weather in there?</h2>
-      <div className="mt-3 flex justify-between gap-1">
+      <div className="mt-3 flex flex-wrap justify-center gap-2">
         {WEATHERS.map((w) => (
           <button
             key={w.key}
             onClick={() => handlePick(w.key)}
             aria-label={w.label}
-            className="btn-squish focus-ring flex h-12 w-12 items-center justify-center rounded-2xl text-2xl"
+            className="btn-squish focus-ring flex h-11 w-11 items-center justify-center rounded-2xl text-xl"
             style={{ background: "var(--color-surface)" }}
           >
             {w.icon}
