@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { APP_NAME } from "@/lib/config";
+import { playGentleChime } from "@/lib/chime";
 import { copyFor, nextOccurrence, type ReminderType } from "@/lib/scheduling";
 import { useSettings } from "@/lib/hooks";
 import { showToast } from "@/lib/toast";
@@ -24,6 +25,7 @@ export function ReminderScheduler() {
       timers.push(
         setTimeout(() => {
           const text = copyFor(type);
+          playGentleChime();
           if (
             document.hidden &&
             typeof Notification !== "undefined" &&

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { APP_NAME, PALETTES } from "@/lib/config";
+import { playGentleChime } from "@/lib/chime";
 import { addMemeLink, removeMemeLink, setSetting } from "@/lib/db";
 import { classifyMemeUrl } from "@/lib/memeEmbed";
 import { signOut, useMemeLinks, useSettings } from "@/lib/hooks";
@@ -42,6 +43,7 @@ export default function SettingsPage() {
 
     setNotifStatus("Sending in 3 seconds — switch to another tab or window to see it pop up...");
     setTimeout(() => {
+      playGentleChime();
       new Notification(APP_NAME, {
         body: "test successful — this is what her reminders will look like 🫧",
         icon: "/icons/icon-192.png",
