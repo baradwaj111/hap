@@ -112,14 +112,15 @@ export function Duck({ state = "idle", weather, size = 160, className }: DuckPro
 
         {/* eye */}
         {state === "sleepy" ? (
-          <path d="M68 70 Q76 76 84 70" stroke="var(--color-ink)" strokeWidth="3" fill="none" strokeLinecap="round" />
+          <path d="M68 70 Q76 76 84 70" stroke="#2b2320" strokeWidth="3" fill="none" strokeLinecap="round" />
         ) : (
           <motion.g
             animate={reduce ? {} : { scaleY: [1, 1, 0.1, 1] }}
             transition={{ duration: 4, repeat: Infinity, times: [0, 0.9, 0.95, 1] }}
             style={{ transformOrigin: "76px 70px" }}
           >
-            <circle cx="76" cy="70" r="4.5" fill="var(--color-ink)" />
+            <circle cx="76" cy="70" r="4.5" fill="#2b2320" />
+            <circle cx="77.5" cy="68.5" r="1.6" fill="#ffffff" />
           </motion.g>
         )}
 
