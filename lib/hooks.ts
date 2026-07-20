@@ -39,21 +39,9 @@ export function useTodayKey(dayStartHour: number): string {
   return key;
 }
 
-const NIGHT_START_HOUR = 20; // 8pm
-
-function computeIsNightMode(dayStartHour: number): boolean {
-  const hour = new Date().getHours();
-  return hour >= NIGHT_START_HOUR || hour < dayStartHour;
-}
-
-/** True from 8pm until her day starts again — drives the automatic night theme. */
-export function useIsNightMode(dayStartHour: number): boolean {
-  const [isNight, setIsNight] = useState(() => computeIsNightMode(dayStartHour));
-  useEffect(() => {
-    const id = setInterval(() => setIsNight(computeIsNightMode(dayStartHour)), 60_000);
-    return () => clearInterval(id);
-  }, [dayStartHour]);
-  return isNight;
+/** Auto night theme retired — always day; kept as a hook so callers don't need to change. */
+export function useIsNightMode(_dayStartHour: number): boolean {
+  return false;
 }
 
 export function useUser() {
